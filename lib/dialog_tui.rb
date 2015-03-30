@@ -55,6 +55,7 @@ module DialogTui
     def run
       begin
         # print_usage  #...
+        before_draw!  # like controller method here...
         print_options  # would be nice to have a printer...
 
         done = false
@@ -98,6 +99,15 @@ module DialogTui
       @ctrl_c ||= []
       @ctrl_c << block
     end
+
+    def before_draw &block
+      @before_draw ||= []
+      @before_draw << block
+    end
+    def before_draw!
+      @before_draw.each &:call if @before_draw
+    end
+    # third => to DRY I guess
 
     private
     def print_options
@@ -177,6 +187,15 @@ if __FILE__ == $0
           exit 0
         end
 
+        before_draw do
+          system 'clear'
+          puts
+          puts ?_*10
+          puts 'manual testing here - use arrows and enter'
+          puts 'no way to fail it - just look at behavior'
+          puts 'ctrl+c when finished'
+        end
+
       }.
       tap { |result|
         raise unless result.nil?
@@ -186,10 +205,8 @@ if __FILE__ == $0
     end
   end
   
-  puts
-  puts ?_*10
-  puts 'manual testing here - use arrows and enter'
-  puts 'no way to fail it - just look at behavior'
-  puts 'ctrl+c when finished'
-  My.new.act
+  loop {
+    My.new.act
+    gets
+  }
 end
