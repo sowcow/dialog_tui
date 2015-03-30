@@ -75,6 +75,10 @@ module DialogTui
           key.enter do
             done = true
           end
+
+          key.ctrl_c do
+            @ctrl_c.each(&:call) if @ctrl_c
+          end
         }
       end until done
 
@@ -88,6 +92,11 @@ module DialogTui
     def option text, &reaction
       option = Option.new self, text, &reaction  # order?
       @options.push option
+    end
+
+    def ctrl_c &block
+      @ctrl_c ||= []
+      @ctrl_c << block
     end
 
     private
@@ -162,6 +171,12 @@ if __FILE__ == $0
         option '3. bye' do
           puts '*waving*'
         end
+
+        ctrl_c do
+          puts 'ctrl+c worked!'
+          exit 0
+        end
+
       }.
       tap { |result|
         raise unless result.nil?
@@ -171,10 +186,10 @@ if __FILE__ == $0
     end
   end
   
-  puts '-----'
-  puts '3 times - choose any option:'
-  puts '-----'
+  puts
+  puts ?_*10
   puts 'manual testing here - use arrows and enter'
   puts 'no way to fail it - just look at behavior'
-  3.times { My.new.act }
+  puts 'ctrl+c when finished'
+  My.new.act
 end
