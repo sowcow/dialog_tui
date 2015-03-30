@@ -85,12 +85,12 @@ module DialogTui
       @current == option  # so current or chosen?)
     end
 
-    private
     def option text, &reaction
       option = Option.new self, text, &reaction  # order?
       @options.push option
     end
 
+    private
     def print_options
       puts '-'*10
       @options.each &:print
@@ -171,6 +171,9 @@ if __FILE__ == $0
     end
   end
   
+  puts '-----'
+  puts '3 times - choose any option:'
+  puts '-----'
   puts 'manual testing here - use arrows and enter'
   puts 'no way to fail it - just look at behavior'
   3.times { My.new.act }
